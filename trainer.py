@@ -105,7 +105,7 @@ class Trainer:
             """INSERT YOUR CODE HERE."""
             with torch.no_grad():
                 pred = self.model(inputs)
-                total_loss += self.optimizer(pred, inputs).item()
+                total_loss += self.criterion(pred, targets).item()
                 nof_samples += len(inputs)
                 correct_labeled_samples += (pred.argmax(1) == targets).type(torch.float).sum().item()
                 avg_loss = total_loss / nof_samples
