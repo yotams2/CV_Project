@@ -28,10 +28,12 @@ class FacesDataset(Dataset):
         """INSERT YOUR CODE HERE, overrun return."""
         if index < len(self.real_image_names):
             img_name = os.path.join(self.root_path, 'real', self.real_image_names[index])
+            label = 0
         else:
             img_name = os.path.join(self.root_path, 'fake', self.fake_image_names[index-len(self.real_image_names)])
+            label = 1
         image = Image.open(img_name)
-        label = index >= len(self.real_image_names)
+
         if self.transform:
             image = self.transform(image)
         sample = (image, label)

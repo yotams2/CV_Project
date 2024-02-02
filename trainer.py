@@ -61,6 +61,16 @@ class Trainer:
 
         for batch_idx, (inputs, targets) in enumerate(train_dataloader):
             """INSERT YOUR CODE HERE."""
+            self.optimizer.zero_grad()
+            pred = self.model(inputs)
+            loss = self.criterion(pred, targets)
+            loss.backward()
+            self.optimizer.step()
+            total_loss += loss.item()  # FIXME check correctness
+            correct_labeled_samples += (pred.argmax(1) == targets).type(torch.float).sum().item()  # FIXME check correctness -  we assume this sums up the number of correct predictions
+            nof_samples += len(inputs)
+            avg_loss = total_loss / nof_samples
+            accuracy = 100 * correct_labeled_samples / nof_samples
             if batch_idx % print_every == 0 or \
                     batch_idx == len(train_dataloader) - 1:
                 print(f'Epoch [{self.epoch:03d}] | Loss: {avg_loss:.3f} | '
@@ -93,6 +103,13 @@ class Trainer:
 
         for batch_idx, (inputs, targets) in enumerate(dataloader):
             """INSERT YOUR CODE HERE."""
+            with torch.no_grad():
+                pred = self.model(inputs)
+                total_loss += self.optimizer(pred, inputs).item()
+                nof_samples += len(inputs)
+                correct_labeled_samples += (pred.argmax(1) == targets).type(torch.float).sum().item()
+                avg_loss = total_loss / nof_samples
+                accuracy = 100 * correct_labeled_samples / nof_samples
             if batch_idx % print_every == 0 or batch_idx == len(dataloader) - 1:
                 print(f'Epoch [{self.epoch:03d}] | Loss: {avg_loss:.3f} | '
                       f'Acc: {accuracy:.2f}[%] '
