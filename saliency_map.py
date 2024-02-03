@@ -62,7 +62,14 @@ def compute_gradient_saliency_maps(samples: torch.tensor,
         shape Bx256x256 where B is the number of images in samples.
     """
     """INSERT YOUR CODE HERE, overrun return."""
-    return torch.rand(6, 256, 256)
+    samples.requires_grad_()
+    pred = model.forward(samples)
+    indices_vector = true_labels.unsqueeze(1)
+    scores_corresponds_to_true_label = torch.gather(pred, 1, indices_vector)
+    scores = scores_corresponds_to_true_label.sum()
+    scores.backward()
+    slc, _ = torch.max(samples.grad.data.abs(), dim=1)
+    return slc
 
 
 def main():  # pylint: disable=R0914, R0915
