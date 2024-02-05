@@ -64,9 +64,8 @@ def compute_gradient_saliency_maps(samples: torch.tensor,
     """INSERT YOUR CODE HERE, overrun return."""
     samples.requires_grad_()
     pred = model.forward(samples)
-    indices_vector = true_labels.unsqueeze(1)
-    scores_corresponds_to_true_label = torch.gather(pred, 1, indices_vector)
-    scores = scores_corresponds_to_true_label.sum()
+    indices = true_labels.unsqueeze(1)
+    scores = torch.gather(pred, 1, indices).sum()
     scores.backward()
     slc, _ = torch.max(samples.grad.data.abs(), dim=1)
     return slc
